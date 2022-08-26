@@ -11,3 +11,7 @@ export const createUser = (
 ): Promise<{ data: Neo4jOrgChart.User }> => {
     return $axios.post("/user/new", user);
 };
+
+export const deleteUser = (userId: string): Promise<{ data: boolean }> => {
+    return $axios.delete(`/user/${userId}`);
+};

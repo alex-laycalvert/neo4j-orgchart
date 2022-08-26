@@ -9,26 +9,28 @@ const nullUser: Neo4jOrgChart.User = {
 };
 
 export const getAllUsers = async (): Promise<Neo4jOrgChart.User[]> => {
+    const session = getSession();
+    let ret: Neo4jOrgChart.User[] = [];
     try {
-        const session = getSession();
         const query = `
             MATCH (u:User)
             RETURN u
         `;
         const result = await session.readTransaction((tx) => tx.run(query));
-        session.close();
-        return result.records.map((value) => value.get("u").properties);
+        ret = result.records.map((value) => value.get("u").properties);
     } catch (e) {
         console.error(e);
-        return [];
     }
+    session.close();
+    return ret;
 };
 
 export const createUser = async (
     user: Neo4jOrgChart.UserProposal
 ): Promise<Neo4jOrgChart.User> => {
+    const session = getSession();
+    let ret: Neo4jOrgChart.User;
     try {
-        const session = getSession();
         const query = `
             MERGE(u:User {
                 id: '${uuid()}',
@@ -39,12 +41,32 @@ export const createUser = async (
             RETURN u
         `;
         const result = await session.writeTransaction((tx) => tx.run(query));
-        return (
+        ret =
             result.records.map((value) => value.get("u").properties)[0] ??
-            nullUser
-        );
+            nullUser;
     } catch (e) {
         console.error(e);
-        return nullUser;
+        ret = nullUser;
     }
+    session.close();
+    return ret;
+};
+
+export const deleteUser = async (userId: string): Promise<boolean> => {
+    const session = getSession();
+    let ret = false;
+    try {
+        const query = `
+            MATCH (u:User {
+                id: '${userId}'
+            })
+            DETACH DELETE u
+        `;
+        await session.writeTransaction((tx) => tx.run(query));
+        ret = true;
+    } catch (e) {
+        console.error(e);
+    }
+    session.close();
+    return ret;
 };

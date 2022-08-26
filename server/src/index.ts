@@ -27,7 +27,7 @@ const {
             console.error("failed to connect to database");
             return;
         }
-        console.info("connected to neo4j Database: ", connection);
+        console.info("connected to neo4j database: ", connection);
 
         app.use(logger("dev"));
         app.use(Express.urlencoded({ extended: true }));
