@@ -1,9 +1,17 @@
 # neo4j-orgchart
 
-***WORK IN PROGRESS***
+A simple implementation of an organization chart using React, Express, and Neo4j
+
+**_WORK IN PROGRESS_**
 Currently the only features are viewing all existing nodes in the database and creating nodes that appear in a list on the frontend.
 
-A simple implementation of an organization chart using React, Express, and Neo4j
+## Current Features
+
+-   Adding `nodes` with a `name` property
+-   Updating `nodes` to have relationships with other `nodes` after creation
+    -   Current Relationship Types: `SUPERVISES`, `BELONGS_TO`
+-   Viewing all `nodes` in a list displaying their `name`
+-   Deleting `nodes` from the list
 
 ## Installing and Running
 
@@ -58,5 +66,3 @@ npm run start
 The frontend will be available in your web browser at http://localhost:3000/orgchart
 
 The backend runs at port 5000 by default.
-
-
