@@ -130,6 +130,7 @@ export const updateNode = async (
     let ret: Neo4jOrgChart.Node = emptyNode;
     try {
         let query = `MATCH (n:OrgChartNode { id: '${proposal.id}' })`;
+        console.log(proposal);
         switch (proposal.type) {
             case "PROPERTY":
                 query += `

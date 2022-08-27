@@ -1,49 +1,55 @@
 import React, { ChangeEvent, useState } from "react";
 import Select from "react-select";
-import { createNode } from "../../requests/node";
+import { updateNode } from "../../requests/node";
 
 import "./styles.scss";
 
 interface Props {
     nodes: Neo4jOrgChart.Node[];
     relationshipTypes: string[];
-    onCreateNode: (createdNode: Neo4jOrgChart.Node) => void;
+    onUpdateNode: (updatedNode: Neo4jOrgChart.Node) => void;
 }
 
-const CreateNodeForm: React.FC<Props> = ({
+const UpdateNodeForm: React.FC<Props> = ({
     nodes,
     relationshipTypes,
-    onCreateNode,
+    onUpdateNode,
 }) => {
-    const [nodeProposal, setNodeProposal] =
-        useState<Neo4jOrgChart.NodeProposal>(null);
+    const [proposal, setProposal] = useState<Neo4jOrgChart.NodeUpdateProposal>({
+        id: "",
+        type: "RELATIONSHIP",
+    });
 
     const resetForm = () => {
-        setNodeProposal(null);
+        setProposal({
+            id: "",
+            type: "RELATIONSHIP",
+        });
     };
 
     const submitForm = async () => {
-        if (!nodeProposal?.name || nodeProposal.name.trim() === "") return;
-        const response = await createNode(nodeProposal);
-        onCreateNode(response.data);
+        if (!proposal.relatedId || !proposal.relationship) return;
+        console.log(proposal);
+        const response = await updateNode(proposal);
+        onUpdateNode(response.data);
         resetForm();
-    };
-
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setNodeProposal((prev) => ({ ...prev, [e.target.id]: e.target.value }));
     };
 
     return (
         <div>
-            <form className="create-node-form">
-                <input
-                    className="name-input"
-                    type="text"
-                    onChange={handleInputChange}
-                    id="name"
-                    name="name"
-                    placeholder="Name"
-                    required
+            <form className="update-node-form">
+                <Select
+                    className="select"
+                    options={nodes.map((node) => ({
+                        label: node.name,
+                        value: node.id,
+                    }))}
+                    onChange={(newValue) => {
+                        setProposal((prev) => ({
+                            ...prev,
+                            id: newValue.value,
+                        }));
+                    }}
                 />
                 <div className="text-sep"></div>
                 <Select
@@ -53,9 +59,10 @@ const CreateNodeForm: React.FC<Props> = ({
                         value: type,
                     }))}
                     onChange={(newValue) => {
-                        setNodeProposal((prev) => ({
+                        setProposal((prev) => ({
                             ...prev,
-                            relationship: newValue.value,
+                            relationship:
+                                newValue.value as Neo4jOrgChart.RelationshipType,
                         }));
                     }}
                 />
@@ -69,7 +76,7 @@ const CreateNodeForm: React.FC<Props> = ({
                         value: node.id,
                     }))}
                     onChange={(newValue) => {
-                        setNodeProposal((prev) => ({
+                        setProposal((prev) => ({
                             ...prev,
                             relatedId: newValue.value,
                         }));
@@ -77,11 +84,11 @@ const CreateNodeForm: React.FC<Props> = ({
                 />
                 <div className="text-sep"></div>
                 <button className="button" onClick={submitForm}>
-                    Create Node
+                    Update Node
                 </button>
             </form>
         </div>
     );
 };
 
-export default CreateNodeForm;
+export default UpdateNodeForm;

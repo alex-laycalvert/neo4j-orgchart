@@ -21,3 +21,9 @@ export const deleteNode = async (id: string) => {
 export const deleteNodes = async (search: Neo4jOrgChart.NodeSearch) => {
     return $axios.delete("/node", { params: search });
 };
+
+export const updateNode = async (
+    proposal: Neo4jOrgChart.NodeUpdateProposal
+) => {
+    return $axios.post("/node/update", proposal);
+};

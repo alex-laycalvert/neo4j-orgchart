@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Draggable from "react-draggable";
 import CreateNodeForm from "../CreateNodeForm";
+import UpdateNodeForm from "../UpdateNodeForm";
 import Node from "../Node";
 import { getAllNodes } from "../../requests/node";
 
@@ -28,6 +28,10 @@ const OrgChartPage: React.FC = () => {
         fetchNodes();
     };
 
+    const onUpdateNode = () => {
+        fetchNodes();
+    };
+
     useEffect(() => {
         fetchNodes();
     }, []);
@@ -39,6 +43,12 @@ const OrgChartPage: React.FC = () => {
                 relationshipTypes={["SUPERVISES", "BELONGS_TO"]}
                 onCreateNode={onCreateNode}
             ></CreateNodeForm>
+            <br />
+            <UpdateNodeForm
+                nodes={nodes}
+                relationshipTypes={["SUPERVISES", "BELONGS_TO"]}
+                onUpdateNode={onUpdateNode}
+            ></UpdateNodeForm>
             {nodes.map((node) => {
                 return (
                     <Node
