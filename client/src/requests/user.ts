@@ -7,7 +7,7 @@ export const getAllUsers = (): Promise<{
 };
 
 export const createUser = (
-    user: Neo4jOrgChart.UserProposal
+    user: Neo4jOrgChart.NodeProposal
 ): Promise<{ data: Neo4jOrgChart.User }> => {
     return $axios.post("/user/new", user);
 };

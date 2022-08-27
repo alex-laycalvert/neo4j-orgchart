@@ -7,17 +7,19 @@ interface Props {
 
 const CreateUserForm: React.FC<Props> = ({ onCreateUser }) => {
     const [userProposal, setUserProposal] =
-        useState<Neo4jOrgChart.UserProposal>({
-            firstName: null,
-            lastName: null,
-            occupation: null,
+        useState<Neo4jOrgChart.NodeProposal>({
+            type: "User",
+            data: { firstName: null, lastName: null, occupation: null },
         });
 
     const resetForm = () => {
         setUserProposal({
-            firstName: null,
-            lastName: null,
-            occupation: null,
+            type: "User",
+            data: {
+                firstName: null,
+                lastName: null,
+                occupation: null,
+            },
         });
     };
 
@@ -35,7 +37,7 @@ const CreateUserForm: React.FC<Props> = ({ onCreateUser }) => {
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setUserProposal((prev) => ({
             ...prev,
-            [e.target.name]: e.target.value,
+            data: { ...prev.data, [e.target.name]: e.target.value },
         }));
     };
 
