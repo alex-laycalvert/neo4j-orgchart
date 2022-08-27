@@ -1,39 +1,50 @@
-import React, { useState, useEffect } from "react";
-import { getAllUsers } from "../../requests/user";
-import CreateUserForm from "../CreateUserForm";
-import UserNode from "../Node/UserNode";
+import React, { useEffect, useState } from "react";
+import Draggable from "react-draggable";
+import CreateNodeForm from "../CreateNodeForm";
+import Node from "../Node";
+import { getAllNodes } from "../../requests/node";
+
+import "./styles.scss";
 
 const OrgChartPage: React.FC = () => {
-    const [users, setUsers] = useState<Neo4jOrgChart.User[]>([]);
+    const [nodes, setNodes] = useState<Neo4jOrgChart.Node[]>([]);
 
-    const fetchUsers = async () => {
-        const res = await getAllUsers();
-        setUsers(res.data);
+    const fetchNodes = async () => {
+        try {
+            const response = await getAllNodes();
+            const nodes = response.data;
+            setNodes(nodes);
+        } catch (e) {
+            console.error(e);
+            setNodes([]);
+        }
     };
 
-    const onCreateUser = async () => {
-        fetchUsers();
+    const onDeleteNode = () => {
+        fetchNodes();
     };
 
-    const onDeleteUser = async () => {
-        fetchUsers();
+    const onCreateNode = () => {
+        fetchNodes();
     };
 
     useEffect(() => {
-        fetchUsers();
+        fetchNodes();
     }, []);
 
     return (
-        <div className="orgchart">
-            <h1>Org Chart</h1>
-            <CreateUserForm onCreateUser={onCreateUser} />
-            <br />
-            {users.map((user) => {
+        <div className="container">
+            <CreateNodeForm
+                nodes={nodes}
+                relationshipTypes={["SUPERVISES", "BELONGS_TO"]}
+                onCreateNode={onCreateNode}
+            ></CreateNodeForm>
+            {nodes.map((node) => {
                 return (
-                    <UserNode
-                        key={user.id}
-                        user={user}
-                        onDeleteUser={onDeleteUser}
+                    <Node
+                        key={node.id}
+                        node={node}
+                        onDeleteNode={onDeleteNode}
                     />
                 );
             })}

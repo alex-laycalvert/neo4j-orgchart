@@ -1,0 +1,17 @@
+.orgchart-container {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.orgchart {
+    background-color: blue;
+    width: 100vw;
+    height: 100vh;
+}
+
+.orgchart-node {
+    background-color: red;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+}
