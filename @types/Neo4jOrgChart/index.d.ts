@@ -31,5 +31,17 @@ declare global {
             relatedId?: string;
             relationship?: RelationshipType;
         }
+
+        interface Relationship {
+            type: RelationshipType;
+            n1: string;
+            n2: string;
+        }
+
+        interface RelationshipSearch {
+            type?: RelationshipType;
+            n1: string;
+            n2: string;
+        }
     }
 }

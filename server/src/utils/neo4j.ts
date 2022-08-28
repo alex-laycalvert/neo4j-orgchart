@@ -1,32 +1,28 @@
-import * as Neo4j from "neo4j-driver";
+import Neode from "neode";
 
-interface Neo4jDriverOptions {
+interface NeodeConfig {
     uri: string;
     username: string;
     password: string;
-    database: string;
+    enterprise?: boolean;
+    database?: string;
 }
 
-let driver: Neo4j.Driver;
-let config: Neo4jDriverOptions;
+let _instance: Neode;
+let _config: NeodeConfig;
 
-export const initNeo4j = async (options: Neo4jDriverOptions) => {
-    config = options;
-    driver = Neo4j.driver(
-        config.uri,
-        Neo4j.auth.basic(config.username, config.password)
+export const initializeNeode = (config: NeodeConfig) => {
+    if (_instance) return;
+    _config = config;
+    _instance = new Neode(
+        _config.uri,
+        _config.username,
+        _config.password,
+        _config.enterprise,
+        _config.database
     );
-    return await driver.verifyConnectivity();
 };
 
-export const close = () => {
-    driver.close();
-};
-
-export const getDriver = (): Neo4j.Driver => {
-    return driver;
-};
-
-export const getSession = (database?: string) => {
-    return driver.session({ database: database ?? config.database });
+export const getInstance = (): Neode => {
+    return _instance;
 };
