@@ -14,11 +14,11 @@ A simple implementation of an organization chart using React, Express, and Neo4j
 
 ## TODO
 
--   [ ] Refresh nodes on page when deleting a node
--   [ ] Protect against relationship loops
--   [ ] Use a menu to drag and drop created nodes onto org chart
--   [ ] Reset form on creating/updating nodes but do not refresh the page
--   [ ] Do not save org chart immediately when changes are implemented, use a proposal to save the state of the org chart when user attempts to save
+-   Refresh nodes on page when deleting a node
+-   Protect against relationship loops
+-   Use a menu to drag and drop created nodes onto org chart
+-   Reset form on creating/updating nodes but do not refresh the page
+-   Do not save org chart immediately when changes are implemented, use a proposal to save the state of the org chart when user attempts to save
 
 ## Installing and Running
 
