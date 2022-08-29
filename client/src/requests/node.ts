@@ -4,26 +4,24 @@ export const createNode = async (proposal: Neo4jOrgChart.NodeProposal) => {
     return $axios.post("/node/new", proposal);
 };
 
-export const getNodes = async (search: Neo4jOrgChart.NodeSearch) => {
-    return $axios.get("/node", { params: search });
+export const getAllNodes = async () => {
+    return $axios.get("/node/all");
 };
 
-export const getAllNodes = async (): Promise<{
-    data: Neo4jOrgChart.Node[];
-}> => {
-    return $axios.get("/node/all");
+export const getNode = async (id: string) => {
+    return $axios.get(`/node/${id}`);
 };
 
 export const deleteNode = async (id: string) => {
     return $axios.delete(`/node/${id}`);
 };
 
-export const deleteNodes = async (search: Neo4jOrgChart.NodeSearch) => {
-    return $axios.delete("/node", { params: search });
+export const deleteAllNodes = async () => {
+    return $axios.delete("/node/all");
 };
 
 export const updateNode = async (
     proposal: Neo4jOrgChart.NodeUpdateProposal
 ) => {
-    return $axios.post("/node/update", proposal);
+    return $axios.put(`/node/${proposal.id}`, proposal);
 };

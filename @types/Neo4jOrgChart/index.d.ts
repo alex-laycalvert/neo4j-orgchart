@@ -2,19 +2,21 @@ export {};
 
 declare global {
     namespace Neo4jOrgChart {
+        type NodeType = "OrgChartNode";
         type NodeUpdateType = "PROPERTY" | "RELATIONSHIP";
-        type RelationshipType = "SUPERVISES" | "BELONGS_TO";
+        type RelationshipType = "SUPERVISES" | "REPORTS_TO" | "BELONGS_TO";
+
+        interface Neo4jModel {
+            name: string;
+            schema: Neode.SchemaObject;
+        }
 
         interface Node {
             id: string;
             name: string;
-        }
-
-        interface NodeSearch {
-            id?: string;
-            relatedId?: string;
-            relationship?: RelationshipType;
-            name?: string;
+            reports_to?: Neode.Relationship;
+            supervises?: Neode.Relationship;
+            belongs_to?: Neode.Relationship;
         }
 
         interface NodeProposal {
@@ -32,16 +34,9 @@ declare global {
             relationship?: RelationshipType;
         }
 
-        interface Relationship {
-            type: RelationshipType;
-            n1: string;
-            n2: string;
-        }
-
-        interface RelationshipSearch {
-            type?: RelationshipType;
-            n1: string;
-            n2: string;
+        interface OrgChartNode {
+            data: Node;
+            children: OrgChartNode[];
         }
     }
 }

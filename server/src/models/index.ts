@@ -1,10 +1,4 @@
-import Neode from "neode";
-interface Model {
-    name: string;
-    schema: Neode.SchemaObject;
-}
-
-const models: Model[] = [
+const models: Neo4jOrgChart.Neo4jModel[] = [
     {
         name: "OrgChartNode",
         schema: {
@@ -17,13 +11,33 @@ const models: Model[] = [
                 type: "string",
                 unique: true,
             },
-            relationship: {
-                type: "relationship",
+            reports_to: {
+                type: "relationships",
+                target: "OrgChartNode",
+                relationship: "REPORTS_TO",
+                direction: "out",
+                properties: {
+                    since: "datetime",
+                },
+                eager: true,
+            },
+            supervises: {
+                type: "relationships",
                 target: "OrgChartNode",
                 relationship: "SUPERVISES",
                 direction: "out",
                 properties: {
-                    name: "string",
+                    since: "datetime",
+                },
+                eager: true,
+            },
+            belongs_to: {
+                type: "relationships",
+                target: "OrgChartNode",
+                relationship: "BELONGS_TO",
+                direction: "out",
+                properties: {
+                    since: "datetime",
                 },
                 eager: true,
             },

@@ -1,10 +1,9 @@
 import Express from "express";
 import cors from "cors";
 import logger from "morgan";
-import Neode from "neode";
 import config from "./config";
 import router from "./routes";
-import { initializeNeode, getInstance } from "./utils/neo4j";
+import { initializeNeode, createModels } from "./utils/neo4j";
 import models from "./models";
 
 const {
@@ -24,7 +23,9 @@ const {
             username: NEO4J_USERNAME,
             password: NEO4J_PASSWORD,
             database: NEO4J_DATABASE,
+            models,
         });
+        createModels();
 
         const app = Express();
 
@@ -37,12 +38,6 @@ const {
             })
         );
         app.use(router);
-
-        // initializing neode models
-        const instance: Neode = getInstance();
-        models.forEach((model) => {
-            instance.model(model.name, model.schema);
-        });
 
         app.listen(PORT, () => {
             console.info(

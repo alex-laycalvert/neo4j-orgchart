@@ -1,22 +1,46 @@
-import React from "react";
-import { deleteNode } from "../../requests/node";
+import React, { useEffect, useState } from "react";
+import { getNode } from "../../requests/node";
+
+import "./styles.scss";
 
 interface Props {
-    node: Neo4jOrgChart.Node;
-    onDeleteNode: () => void;
+    nodeId: string;
+    onClick?: (id: string) => void;
 }
 
-const Node: React.FC<Props> = ({ node, onDeleteNode }) => {
-    const handleDeleteNode = async () => {
-        await deleteNode(node.id);
-        onDeleteNode();
+const Node: React.FC<Props> = ({ nodeId, onClick }) => {
+    const [node, setNode] = useState<Neo4jOrgChart.Node>({
+        id: "NULL",
+        name: "NULL",
+    });
+
+    const fetchNode = async () => {
+        setNode((await getNode(nodeId)).data.data);
     };
 
+    useEffect(() => {
+        fetchNode();
+    }, []);
+
     return (
-        <div className="list-node">
-            <h3>{node.name}</h3>
-            <button onClick={handleDeleteNode}>Delete Node</button>
-        </div>
+        <li key={node.id}>
+            <div className="orgchart-node" onClick={() => onClick(node.id)}>
+                <div className="orgchart-node-body">{node.name}</div>
+            </div>
+            {node.reports_to && (
+                <ul>
+                    {node.supervises.map((child: any) => {
+                        return (
+                            <Node
+                                key={child.node.id}
+                                nodeId={child.node.id}
+                                onClick={onClick}
+                            />
+                        );
+                    })}
+                </ul>
+            )}
+        </li>
     );
 };
 

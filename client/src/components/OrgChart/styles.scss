@@ -1,17 +1,136 @@
-.orgchart-container {
-    height: 100vh;
-    overflow: hidden;
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.name-input {
+    width: 192px;
+}
+
+.select {
+    width: 200px;
+}
+
+.button {
+    width: 200px;
+}
+
+.text-sep {
+    display: flex;
+    align-items: center;
+    margin: 10px;
 }
 
 .orgchart {
-    background-color: blue;
-    width: 100vw;
-    height: 100vh;
-}
+    display: flex;
+    justify-content: center;
 
-.orgchart-node {
-    background-color: red;
-    width: 100px;
-    height: 100px;
-    text-align: center;
+    ul {
+        padding-top: 20px;
+        position: relative;
+        transition: all 0.5s;
+
+        ul::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 1px solid #cccccc;
+            width: 0;
+        }
+    }
+
+    li {
+        float: left;
+        text-align: center;
+        list-style-type: none;
+        position: relative;
+        padding: 20px 10px;
+        transition: all 0.5s;
+        &::before,
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 1px solid #ccc;
+            width: 50%;
+            height: 20px;
+        }
+        &::after {
+            right: auto;
+            left: 50%;
+            border-left: 1px solid #ccc;
+        }
+        &:only-child::after,
+        &:only-child::before {
+            display: none;
+        }
+        &:only-child {
+            padding-top: 0;
+        }
+        &:first-child::before,
+        &:last-child::after {
+            border: 0 none;
+        }
+        &:last-child::before {
+            border-right: 1px solid #ccc;
+            border-radius: 0 5px 0 0;
+        }
+        &:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+    }
+
+    .orgchart-node {
+        text-decoration: none;
+        color: #666;
+        display: inline-block;
+        padding: 20px 10px;
+        transition: all 0.5s;
+        background: #fff;
+        border-radius: 6px;
+        width: 200px;
+        height: 50px;
+        border: 1px solid #555555;
+
+        .orgchart-node-header {
+            // TODO
+        }
+
+        .orgchart-node-body {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .orgchart-node-footer {
+            // TODO
+        }
+
+        &:hover,
+        &:hover + ul li .user {
+            background: lighten(#999999, 45%);
+            color: #444444;
+            transition: all 0.15s;
+            transform: translateY(-5px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            img {
+                box-shadow: 0 0 0 5px lighten(blue, 20%);
+            }
+        }
+        &:hover {
+            + ul li::after,
+            + ul li::before,
+            + ul::before,
+            + ul ul::before {
+                border-color: #94a0b4;
+            }
+        }
+        > div,
+        > a {
+            font-size: 12px;
+        }
+    }
 }

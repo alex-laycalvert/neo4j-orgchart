@@ -29,7 +29,6 @@ const UpdateNodeForm: React.FC<Props> = ({
 
     const submitForm = async () => {
         if (!proposal.relatedId || !proposal.relationship) return;
-        console.log(proposal);
         const response = await updateNode(proposal);
         onUpdateNode(response.data);
         resetForm();

@@ -1,4 +1,5 @@
 import Express from "express";
+import Neode from "neode";
 import { getInstance } from "../utils/neo4j";
 
 const router = Express.Router();
@@ -48,7 +49,16 @@ router.route("/new").post(async (req, res) => {
             });
             return;
         }
-        const createdNode = await instance.create("OrgChartNode", req.body);
+        const createdNode = await instance.merge("OrgChartNode", req.body);
+        if (req.body.relatedId) {
+            const relatedNode = await instance.find(
+                "OrgChartNode",
+                req.body.relatedId
+            );
+            await createdNode.relateTo(relatedNode, req.body.relationship, {
+                since: Date.now(),
+            });
+        }
         res.status(200).json({
             message: "created node",
             data: await createdNode.toJson(),
@@ -73,7 +83,7 @@ router
             });
         } catch (e) {
             res.status(500).json({
-                message: "error creating node",
+                message: "error returning node",
                 data: e,
             });
         }
@@ -82,10 +92,30 @@ router
         try {
             const instance = getInstance();
             const node = await instance.find("OrgChartNode", req.params.id);
-            const updatedNode = await node.update(req.body);
+            let update: any;
+            switch (req.body.type) {
+                case "PROPERTY":
+                    update = await node.update({
+                        [req.body.key]: req.body.value,
+                    });
+                    break;
+                case "RELATIONSHIP":
+                    const relatedNode = await instance.find(
+                        "OrgChartNode",
+                        req.body.relatedId
+                    );
+                    update = await node.relateTo(
+                        relatedNode,
+                        req.body.relationship,
+                        { since: Date.now() }
+                    );
+                    break;
+                default:
+                    break;
+            }
             res.status(200).json({
                 message: "updated node",
-                data: await updatedNode.toJson(),
+                data: await update.toJson(),
             });
         } catch (e) {
             res.status(500).json({
@@ -96,8 +126,34 @@ router
     })
     .delete(async (req, res) => {
         try {
+            if (req.params.id === "0") {
+                res.status(400).json({
+                    message: "cannot delete root node",
+                });
+                return;
+            }
             const instance = getInstance();
             const node = await instance.find("OrgChartNode", req.params.id);
+            const children = node.get("supervises") as Array<any>;
+            if (children.length > 0) {
+                const queryResults = await instance.cypher(
+                    "MATCH (s:OrgChartNode)-[r:SUPERVISES]->(n:OrgChartNode { id: $nodeId }) RETURN s",
+                    { nodeId: req.params.id }
+                );
+                const supervisorId =
+                    queryResults.records.map(
+                        (record) => record.get("s")?.properties?.id
+                    )?.[0] ?? "0";
+                const supervisor = await instance.find(
+                    "OrgChartNode",
+                    supervisorId
+                );
+                children.forEach(async (child: Neode.Relationship) => {
+                    await supervisor.relateTo(child.endNode(), "supervises", {
+                        since: Date.now(),
+                    });
+                });
+            }
             await instance.delete(node);
             res.status(200).json({
                 message: "deleted node",

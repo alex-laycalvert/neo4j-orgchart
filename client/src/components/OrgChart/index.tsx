@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
+import { getAllNodes, deleteNode } from "../../requests/node";
 import CreateNodeForm from "../CreateNodeForm";
 import UpdateNodeForm from "../UpdateNodeForm";
 import Node from "../Node";
-import { getAllNodes } from "../../requests/node";
 
 import "./styles.scss";
 
 const OrgChartPage: React.FC = () => {
     const [nodes, setNodes] = useState<Neo4jOrgChart.Node[]>([]);
+    const [rootNode, setRootNode] = useState<Neo4jOrgChart.Node>(null);
 
     const fetchNodes = async () => {
         try {
             const response = await getAllNodes();
-            const nodes = response.data;
+            const nodes = response?.data?.data;
             setNodes(nodes);
         } catch (e) {
             console.error(e);
@@ -20,44 +21,47 @@ const OrgChartPage: React.FC = () => {
         }
     };
 
-    const onDeleteNode = () => {
+    const onCreateNode = async () => {
         fetchNodes();
     };
 
-    const onCreateNode = () => {
+    const onUpdateNode = async () => {
         fetchNodes();
     };
 
-    const onUpdateNode = () => {
-        fetchNodes();
+    const handleDeleteNode = async (id: string) => {
+        await deleteNode(id);
     };
 
     useEffect(() => {
         fetchNodes();
     }, []);
 
+    useEffect(() => {
+        setRootNode(nodes.filter((node) => node.id === "0")?.[0]);
+    }, [nodes]);
+
     return (
         <div className="container">
             <CreateNodeForm
                 nodes={nodes}
-                relationshipTypes={["SUPERVISES", "BELONGS_TO"]}
+                relationshipTypes={["supervises", "reports_to", "belongs_to"]}
                 onCreateNode={onCreateNode}
             ></CreateNodeForm>
             <br />
             <UpdateNodeForm
                 nodes={nodes}
-                relationshipTypes={["SUPERVISES", "BELONGS_TO"]}
+                relationshipTypes={["supervises", "reports_to", "belongs_to"]}
                 onUpdateNode={onUpdateNode}
             ></UpdateNodeForm>
-            {nodes.map((node) => {
-                return (
-                    <Node
-                        key={node.id}
-                        node={node}
-                        onDeleteNode={onDeleteNode}
-                    />
-                );
-            })}
+            <br />
+            <div className="orgchart">
+                <ul>
+                    {rootNode && (
+                        <Node nodeId={rootNode.id} onClick={handleDeleteNode} />
+                    )}
+                </ul>
+            </div>
         </div>
     );
 };

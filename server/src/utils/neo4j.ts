@@ -4,8 +4,9 @@ interface NeodeConfig {
     uri: string;
     username: string;
     password: string;
+    database: string;
+    models: Neo4jOrgChart.Neo4jModel[];
     enterprise?: boolean;
-    database?: string;
 }
 
 let _instance: Neode;
@@ -25,4 +26,10 @@ export const initializeNeode = (config: NeodeConfig) => {
 
 export const getInstance = (): Neode => {
     return _instance;
+};
+
+export const createModels = () => {
+    return _config.models.map((model) =>
+        _instance.model(model.name, model.schema)
+    );
 };
